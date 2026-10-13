@@ -5,7 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_OPEN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.restore_state import RestoreEntity
-from .const import DOMAIN, CONF_DEVICE_ID
+from .const import DOMAIN, CONF_DEVICE_ID, STATUS_MAP
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,6 +15,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([MaveoGarage(bridge, device_id)])
 
 class MaveoGarage(CoverEntity, RestoreEntity):
+    _attr_translation_key = "garage_door"
+
     def __init__(self, bridge, device_id):
         self._bridge = bridge
         self._attr_unique_id = f"{device_id}_garage"
@@ -58,6 +60,8 @@ class MaveoGarage(CoverEntity, RestoreEntity):
         if "StoA_s" in payload:
             status = payload["StoA_s"]
             _LOGGER.debug("Status von Maveo: %s", payload)
+            # Detaillierter Status (z.B. Lüftung) für Dashboards, siehe auch Sensor
+            self._attr_extra_state_attributes = {"door_status": STATUS_MAP.get(status)}
             
             # Reset erst mal alles
             self._attr_is_opening = False

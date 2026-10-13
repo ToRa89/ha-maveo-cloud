@@ -11,6 +11,23 @@
           "ventilation": "Lüftung"
         }
       }
+    },
+    "cover": {
+      "garage_door": {
+        "state_attributes": {
+          "door_status": {
+            "name": "Torstatus",
+            "state": {
+              "stopped": "Gestoppt",
+              "opening": "Öffnet",
+              "closing": "Schließt",
+              "open": "Offen",
+              "closed": "Geschlossen",
+              "ventilation": "Lüftung"
+            }
+          }
+        }
+      }
     }
   }
 }
