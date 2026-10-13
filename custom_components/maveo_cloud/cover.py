@@ -25,6 +25,8 @@ class MaveoGarage(CoverEntity, RestoreEntity):
         self._attr_is_closed = None
         self._attr_is_opening = False
         self._attr_is_closing = False
+        # Tilt bildet die Lüftungsposition ab: 100 = Lüftung, 0 = keine Lüftung
+        self._attr_current_cover_tilt_position = None
 
         self._attr_supported_features = (
             CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.STOP | CoverEntityFeature.OPEN_TILT #für untere zwsichenposition
@@ -91,6 +93,8 @@ class MaveoGarage(CoverEntity, RestoreEntity):
                 self._attr_is_closed = False
             
             # Alle anderen Werte (0, 6 und unbekannte) bleiben auf "offen".
+
+            self._attr_current_cover_tilt_position = 100 if status == 6 else 0
 
             # WICHTIG: schedule_update_ha_state nutzen statt async_write_ha_state
             self.schedule_update_ha_state()
