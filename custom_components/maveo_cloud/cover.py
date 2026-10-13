@@ -1,9 +1,13 @@
+import logging
+
 from homeassistant.components.cover import CoverEntity, CoverDeviceClass, CoverEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_OPEN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.restore_state import RestoreEntity
 from .const import DOMAIN, CONF_DEVICE_ID
+
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     bridge = hass.data[DOMAIN][entry.entry_id]
@@ -51,11 +55,14 @@ class MaveoGarage(CoverEntity, RestoreEntity):
         """Callback von der Bridge."""
         if "StoA_s" in payload:
             status = payload["StoA_s"]
+            _LOGGER.debug("Status von Maveo: %s", payload)
             
             # Reset erst mal alles
             self._attr_is_opening = False
             self._attr_is_closing = False
-            self._attr_is_closed = None # Standard: Unbekannt/Zwischenposition
+            # Standard: Tor steht zwischen den Endlagen (gestoppt, Zwischenposition).
+            # Für Home Assistant ist ein nicht ganz geschlossenes Tor "offen".
+            self._attr_is_closed = False
 
             # Status Mapping
             # 1: opening -> Wird geöffnet
@@ -81,8 +88,7 @@ class MaveoGarage(CoverEntity, RestoreEntity):
                 self._attr_is_closing = True
                 self._attr_is_closed = False
             
-            # Wenn status z.B. 0 ist (Stopped), bleibt is_closed auf None.
-            # Ergebnis: HA zeigt "Unbekannt" oder Zwischenstatus und aktiviert BEIDE Buttons.
+            # Alle anderen Werte (z.B. 0 = gestoppt) bleiben auf "offen".
 
             # WICHTIG: schedule_update_ha_state nutzen statt async_write_ha_state
             self.schedule_update_ha_state()
