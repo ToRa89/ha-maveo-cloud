@@ -50,6 +50,8 @@ class MaveoGarage(CoverEntity):
             # 2: closing -> Wird geschlossen
             # 3: open    -> Ganz offen
             # 4: closed  -> Ganz zu
+            # 0: gestoppt zwischen den Endlagen -> offen
+            # 6: Lüftungsposition (untere Zwischenposition) -> offen
             
             if status == 3: 
                 # Ganz offen -> Open Button grau, Close Button aktiv
@@ -69,7 +71,7 @@ class MaveoGarage(CoverEntity):
                 self._attr_is_closing = True
                 self._attr_is_closed = False
             
-            # Alle anderen Werte (z.B. 0 = gestoppt) bleiben auf "offen".
+            # Alle anderen Werte (0, 6 und unbekannte) bleiben auf "offen".
 
             # WICHTIG: schedule_update_ha_state nutzen statt async_write_ha_state
             self.schedule_update_ha_state()
