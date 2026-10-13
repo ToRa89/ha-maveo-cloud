@@ -3,19 +3,9 @@ import logging
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from .const import DOMAIN, CONF_DEVICE_ID
+from .const import DOMAIN, CONF_DEVICE_ID, STATUS_MAP
 
 _LOGGER = logging.getLogger(__name__)
-
-# StoA_s -> Zustand des Tors
-STATUS_MAP = {
-    0: "stopped",
-    1: "opening",
-    2: "closing",
-    3: "open",
-    4: "closed",
-    6: "ventilation",
-}
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     bridge = hass.data[DOMAIN][entry.entry_id]

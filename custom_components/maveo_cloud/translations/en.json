@@ -11,6 +11,23 @@
           "ventilation": "Ventilation"
         }
       }
+    },
+    "cover": {
+      "garage_door": {
+        "state_attributes": {
+          "door_status": {
+            "name": "Door status",
+            "state": {
+              "stopped": "Stopped",
+              "opening": "Opening",
+              "closing": "Closing",
+              "open": "Open",
+              "closed": "Closed",
+              "ventilation": "Ventilation"
+            }
+          }
+        }
+      }
     }
   }
 }

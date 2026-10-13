@@ -1,7 +1,7 @@
 from homeassistant.components.cover import CoverEntity, CoverDeviceClass, CoverEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from .const import DOMAIN, CONF_DEVICE_ID
+from .const import DOMAIN, CONF_DEVICE_ID, STATUS_MAP
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     bridge = hass.data[DOMAIN][entry.entry_id]
@@ -9,6 +9,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([MaveoGarage(bridge, device_id)])
 
 class MaveoGarage(CoverEntity):
+    _attr_translation_key = "garage_door"
+
     def __init__(self, bridge, device_id):
         self._bridge = bridge
         self._attr_unique_id = f"{device_id}_garage"
@@ -32,6 +34,8 @@ class MaveoGarage(CoverEntity):
         """Callback von der Bridge."""
         if "StoA_s" in payload:
             status = payload["StoA_s"]
+            # Detaillierter Status (z.B. Lüftung) für Dashboards, siehe auch Sensor
+            self._attr_extra_state_attributes = {"door_status": STATUS_MAP.get(status)}
             
             # Reset erst mal alles
             self._attr_is_opening = False
