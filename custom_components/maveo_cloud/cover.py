@@ -96,6 +96,10 @@ class MaveoGarage(CoverEntity, RestoreEntity):
 
             self._attr_current_cover_tilt_position = 100 if status == 6 else 0
 
+            # Zwischen den Endlagen ist die genaue Position nicht bekannt. assumed_state
+            # sorgt dafür, dass das Frontend Öffnen und Schließen aktiv lässt.
+            self._attr_assumed_state = status not in (1, 2, 3, 4)
+
             # WICHTIG: schedule_update_ha_state nutzen statt async_write_ha_state
             self.schedule_update_ha_state()
 
