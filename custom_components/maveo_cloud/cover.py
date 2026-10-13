@@ -5,7 +5,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_OPEN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.restore_state import RestoreEntity
-from .const import DOMAIN, CONF_DEVICE_ID, STATUS_MAP
+from .const import DOMAIN, CONF_DEVICE_ID
+from .const import STATUS_MAP
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,13 +16,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([MaveoGarage(bridge, device_id)])
 
 class MaveoGarage(CoverEntity, RestoreEntity):
-    _attr_translation_key = "garage_door"
-
     def __init__(self, bridge, device_id):
         self._bridge = bridge
         self._attr_unique_id = f"{device_id}_garage"
         self._attr_name = "Maveo Garagentor"
         self._attr_device_class = CoverDeviceClass.GARAGE
+        self._attr_translation_key = "garage_door"
         
         # Startzustand: None = Unbekannt -> Beide Buttons aktiv
         self._attr_is_closed = None
